@@ -49,7 +49,7 @@ export default function LiveTracking() {
 
   // Fetch real location playback history from the API on mount
   React.useEffect(() => {
-    fetch('https://148.66.154.176:8099/api/devices/354017113649335/locations?limit=500')
+    fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=500')
         .then((res) => {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.json();
