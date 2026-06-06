@@ -13,7 +13,8 @@ import {
   Battery,
   Clock,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  Loader2 // Imported the spinner icon
 } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
@@ -41,6 +42,7 @@ export default function LiveTracking() {
   const [apiLocations, setApiLocations] = React.useState<ApiLocationData[]>([]);
   const [selectedVehicle, setSelectedVehicle] = React.useState<Vehicle | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState<boolean>(true); // Added loading state
 
   const [mapConfig, setMapConfig] = React.useState<{ center: [number, number]; zoom: number }>({
     center: [9.01377, 38.7101783],
@@ -49,6 +51,7 @@ export default function LiveTracking() {
 
   // Fetch real location playback history from the API on mount
   React.useEffect(() => {
+    setIsLoading(true);
     fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=500')
         .then((res) => {
           if (!res.ok) throw new Error('Network response was not ok');
@@ -62,7 +65,7 @@ export default function LiveTracking() {
             const activeVehicle: Vehicle = {
               id: "354017113649335",
               deviceId: "354017113649335",
-              type: "car", // Added: Tells your Map wrapper to style this with a truck icon asset instead of a circle
+              type: "car",
               name: "Wube",
               plate: "AA-C1000",
               status: data[0].speed > 0 ? 'moving' : 'idle',
@@ -80,9 +83,13 @@ export default function LiveTracking() {
               zoom: 15
             });
           }
-        }).catch((err) => {
-      console.error('Failed to fetch tracking history:', err);
-    });
+        })
+        .catch((err) => {
+          console.error('Failed to fetch tracking history:', err);
+        })
+        .finally(() => {
+          setIsLoading(false); // Turns off the spinner once data is injected
+        });
   }, []);
 
   // Simulation Loop driving playback updates
@@ -174,9 +181,9 @@ export default function LiveTracking() {
                     </div>
                   </button>
               ))}
-              {vehicles.length === 0 && (
+              {!isLoading && vehicles.length === 0 && (
                   <div className="p-4 text-center text-sm text-muted-foreground">
-                    Connecting to streaming telematics feed...
+                    No active vehicles found.
                   </div>
               )}
             </div>
@@ -192,6 +199,16 @@ export default function LiveTracking() {
               zoom={mapConfig.zoom}
               onVehicleClick={handleVehicleSelect}
           />
+
+          {/* Spinner Overlay on top of the Map */}
+          {isLoading && (
+              <div className="absolute inset-0 z-[2000] flex flex-col items-center justify-center bg-background/40 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-2 p-4 bg-background/90 rounded-xl shadow-lg border border-border">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="text-xs font-medium text-muted-foreground">Locating vehicles...</span>
+                </div>
+              </div>
+          )}
 
           {/* Floating Details Overlay */}
           {selectedVehicle && (
