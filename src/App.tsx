@@ -25,15 +25,15 @@ function App() {
       <Toaster position="top-right" richColors />
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/tracking" element={<LiveTracking />} />
-          <Route path="/fleet" element={<FleetManagement />} />
-          <Route path="/drivers" element={<Placeholder title="Driver Management" />} />
-          <Route path="/devices" element={<Placeholder title="Device Inventory" />} />
-          <Route path="/alerts" element={<Placeholder title="Alert Log" />} />
-          <Route path="/reports" element={<Placeholder title="Reports & Analytics" />} />
-          <Route path="/docs" element={<Documentation />} />
-          <Route path="/settings" element={<Placeholder title="System Settings" />} />
+          {/*<Route path="/" element={<Dashboard />} />*/}
+          <Route path="/" element={<LiveTracking />} />
+          {/*<Route path="/fleet" element={<FleetManagement />} />*/}
+          {/*<Route path="/drivers" element={<Placeholder title="Driver Management" />} />*/}
+          {/*<Route path="/devices" element={<Placeholder title="Device Inventory" />} />*/}
+          {/*<Route path="/alerts" element={<Placeholder title="Alert Log" />} />*/}
+          {/*<Route path="/reports" element={<Placeholder title="Reports & Analytics" />} />*/}
+          {/*<Route path="/docs" element={<Documentation />} />*/}
+          {/*<Route path="/settings" element={<Placeholder title="System Settings" />} />*/}
         </Route>
       </Routes>
     </Router>

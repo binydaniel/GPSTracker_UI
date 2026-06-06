@@ -21,14 +21,14 @@ import { toast } from 'sonner';
 import { mockUser } from '../utils/mockData';
 
 const navItems = [
-  { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+  // { name: 'Dashboard', path: '/', icon: LayoutDashboard },
   { name: 'Live Tracking', path: '/tracking', icon: MapIcon },
-  { name: 'Fleet', path: '/fleet', icon: Truck },
-  { name: 'Drivers', path: '/drivers', icon: Users },
-  { name: 'Devices', path: '/devices', icon: Cpu },
-  { name: 'Alerts', path: '/alerts', icon: Bell },
-  { name: 'Reports', path: '/reports', icon: FileText },
-  { name: 'Documentation', path: '/docs', icon: Info },
+  // { name: 'Fleet', path: '/fleet', icon: Truck },
+  // { name: 'Drivers', path: '/drivers', icon: Users },
+  // { name: 'Devices', path: '/devices', icon: Cpu },
+  // { name: 'Alerts', path: '/alerts', icon: Bell },
+  // { name: 'Reports', path: '/reports', icon: FileText },
+  // { name: 'Documentation', path: '/docs', icon: Info },
 ];
 
 export function Layout() {

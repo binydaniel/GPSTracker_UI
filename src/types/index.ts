@@ -49,8 +49,8 @@ export interface Geofence {
   id: string;
   name: string;
   type: 'circle' | 'polygon';
-  coordinates: any; // Leaflet coordinates
-  radius?: number; // for circle
+  coordinates: any;
+  radius?: number;
   color: string;
   active: boolean;
 }
