@@ -22,7 +22,7 @@ import { mockUser } from '../utils/mockData';
 
 const navItems = [
   // { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-  { name: 'Live Tracking', path: '/tracking', icon: MapIcon },
+  { name: 'Live Tracking', path: '/', icon: MapIcon },
   // { name: 'Fleet', path: '/fleet', icon: Truck },
   // { name: 'Drivers', path: '/drivers', icon: Users },
   // { name: 'Devices', path: '/devices', icon: Cpu },

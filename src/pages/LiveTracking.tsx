@@ -52,7 +52,7 @@ export default function LiveTracking() {
   // Fetch real location playback history from the API on mount
   React.useEffect(() => {
     setIsLoading(true);
-    fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=500')
+    fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=1')
         .then((res) => {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.json();
@@ -60,7 +60,6 @@ export default function LiveTracking() {
         .then((data: ApiLocationData[]) => {
           if (data && data.length > 0) {
             setApiLocations(data);
-
             // Construct an active vehicle matching metadata flags needed by the custom Map icons renderer
             const activeVehicle: Vehicle = {
               id: "354017113649335",
@@ -68,11 +67,11 @@ export default function LiveTracking() {
               type: "car",
               name: "Wube",
               plate: "AA-C1000",
-              status: data[0].speed > 0 ? 'moving' : 'idle',
+              status: data[0].speed > 0 ? 'idle' : 'idle',
               location: [data[0].latitude, data[0].longitude],
               speed: Math.round(data[0].speed),
-              fuel: 85.5,
-              battery: 98.0,
+              fuel: 0,
+              battery: 0,
               lastPing: data[0].timestamp,
               currentHistoryIndex: 0
             };
