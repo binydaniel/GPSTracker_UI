@@ -1,8 +1,8 @@
 import React from 'react';
 import { Map } from '../components/Map';
 import { mockGeofences } from '../utils/mockData';
-import { simulateMovement } from '../utils/simulation';
 import { Vehicle } from '../types';
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'; // 1. Added SignalR Imports
 import {
   Search,
   Filter,
@@ -14,7 +14,7 @@ import {
   Clock,
   ArrowRight,
   TrendingUp,
-  Loader2 // Imported the spinner icon
+  Loader2
 } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
@@ -39,17 +39,16 @@ interface ApiLocationData {
 
 export default function LiveTracking() {
   const [vehicles, setVehicles] = React.useState<Vehicle[]>([]);
-  const [apiLocations, setApiLocations] = React.useState<ApiLocationData[]>([]);
   const [selectedVehicle, setSelectedVehicle] = React.useState<Vehicle | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState<boolean>(true); // Added loading state
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   const [mapConfig, setMapConfig] = React.useState<{ center: [number, number]; zoom: number }>({
     center: [9.01377, 38.7101783],
     zoom: 13
   });
 
-  // Fetch real location playback history from the API on mount
+  // 2. Main initial query to fetch the last known location state on component load
   React.useEffect(() => {
     setIsLoading(true);
     fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=1')
@@ -59,19 +58,17 @@ export default function LiveTracking() {
         })
         .then((data: ApiLocationData[]) => {
           if (data && data.length > 0) {
-            setApiLocations(data);
-            // Construct an active vehicle matching metadata flags needed by the custom Map icons renderer
             const activeVehicle: Vehicle = {
               id: "354017113649335",
               deviceId: "354017113649335",
               type: "car",
               name: "Wube",
               plate: "AA-C1000",
-              status: data[0].speed > 0 ? 'idle' : 'idle',
+              status: data[0].speed > 0 ? 'moving' : 'idle',
               location: [data[0].latitude, data[0].longitude],
               speed: Math.round(data[0].speed),
-              fuel: 0,
-              battery: 0,
+              fuel: 85, // Assigned placeholders since historical API returned 0
+              battery: 92,
               lastPing: data[0].timestamp,
               currentHistoryIndex: 0
             };
@@ -87,28 +84,60 @@ export default function LiveTracking() {
           console.error('Failed to fetch tracking history:', err);
         })
         .finally(() => {
-          setIsLoading(false); // Turns off the spinner once data is injected
+          setIsLoading(false);
         });
   }, []);
 
-  // Simulation Loop driving playback updates
+  // 3. Realtime Telemetry Hook: Replaces simulation engine with persistent WebSocket subscriptions
   React.useEffect(() => {
-    if (apiLocations.length === 0) return;
+    // Instantiate connection
+    const connection = new HubConnectionBuilder()
+        .withUrl("https://yoursitenote.com:8099/hubs/tracking") // <-- Change to your actual backend hub endpoint
+        .withAutomaticReconnect()
+        .configureLogging(LogLevel.Warning)
+        .build();
 
-    const interval = setInterval(() => {
-      setVehicles(prev => simulateMovement(prev, apiLocations));
-    }, 3000);
+    // Event Handler: Triggers immediately when a target vehicle moves
+    // Change "ReceiveLocationUpdate" to the server-side broadcast method identifier
+    connection.on("LocationUpdate", (updatedLocation: ApiLocationData) => {
+      setVehicles((prevVehicles) =>
+          prevVehicles.map((vehicle) => {
+            // Target specific vehicle mapping by checking matching IDs
+            if (vehicle.id === "354017113649335") {
+              return {
+                ...vehicle,
+                location: [updatedLocation.latitude, updatedLocation.longitude],
+                speed: Math.round(updatedLocation.speed),
+                status: updatedLocation.speed > 0 ? 'moving' : 'idle',
+                lastPing: updatedLocation.timestamp
+              };
+            }
+            return vehicle;
+          })
+      );
+    });
 
-    return () => clearInterval(interval);
-  }, [apiLocations]);
+    connection.invoke("Subscribe", "354017113649335")
 
-  // Sync details modal selection panel properties
+    // Handle WebSocket lifecycle connections safely
+    connection.start()
+        .then(() => console.log('Connected to Live Tracking Telemetry Stream.'))
+        .catch(err => console.error('SignalR Telemetry initialization failure: ', err));
+
+    // Garbage clean up on view unmount to prevent lingering thread allocations
+    return () => {
+      connection.off("LocationUpdate");
+      connection.stop();
+    };
+  }, []);
+
+  // Sync details modal selection panel properties dynamically
   React.useEffect(() => {
     if (selectedVehicle) {
       const updated = vehicles.find(v => v.id === selectedVehicle.id);
       if (updated) setSelectedVehicle(updated);
     }
-  }, [vehicles]);
+  }, [vehicles, selectedVehicle]);
 
   const filteredVehicles = vehicles.filter(v =>
       v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

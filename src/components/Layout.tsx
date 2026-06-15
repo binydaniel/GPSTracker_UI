@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
 import { 
-  LayoutDashboard, 
+  // LayoutDashboard,
   Map as MapIcon, 
   Truck, 
   Users, 
@@ -24,11 +24,11 @@ const navItems = [
   // { name: 'Dashboard', path: '/', icon: LayoutDashboard },
   { name: 'Live Tracking', path: '/', icon: MapIcon },
   // { name: 'Fleet', path: '/fleet', icon: Truck },
-  // { name: 'Drivers', path: '/drivers', icon: Users },
-  // { name: 'Devices', path: '/devices', icon: Cpu },
-  // { name: 'Alerts', path: '/alerts', icon: Bell },
-  // { name: 'Reports', path: '/reports', icon: FileText },
-  // { name: 'Documentation', path: '/docs', icon: Info },
+  { name: 'Drivers', path: '/drivers', icon: Users },
+  { name: 'Devices', path: '/devices', icon: Cpu },
+  { name: 'Alerts', path: '/alerts', icon: Bell },
+  { name: 'Reports', path: '/reports', icon: FileText },
+  { name: 'Documentation', path: '/docs', icon: Info },
 ];
 
 export function Layout() {
