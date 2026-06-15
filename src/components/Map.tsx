@@ -7,13 +7,13 @@ import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
-import { Circle as CircleGeom, Polygon as PolygonGeom } from 'ol/geom';
-import { Style, Fill, Stroke } from 'ol/style';
-import { fromLonLat } from 'ol/proj';
+import {Circle as CircleGeom, Polygon as PolygonGeom} from 'ol/geom';
+import {Fill, Stroke, Style} from 'ol/style';
+import {fromLonLat} from 'ol/proj';
 import Overlay from 'ol/Overlay';
-import { Vehicle, Geofence } from '../types';
-import { Truck, Car, Bike } from 'lucide-react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import {Geofence, Vehicle} from '@/types';
+import {Bike, Car, Truck} from 'lucide-react';
+import {renderToStaticMarkup} from 'react-dom/server';
 
 interface MapProps {
   vehicles?: Vehicle[];
@@ -156,25 +156,24 @@ export function Map({
       }
 
       // Update element content (React icons rendered to static markup)
-      const iconHtml = renderToStaticMarkup(
-        <div className="relative pointer-events-auto cursor-pointer">
-          <div 
-            className="w-10 h-10 rounded-full bg-white shadow-lg border-2 flex items-center justify-center transform transition-transform"
-            style={{ borderColor: color }}
-          >
-            {v.type === 'truck' && <Truck className="w-6 h-6" style={{ color }} />}
-            {v.type === 'car' && <Car className="w-6 h-6" style={{ color }} />}
-            {v.type === 'motorcycle' && <Bike className="w-6 h-6" style={{ color }} />}
-            {v.type === 'van' && <Truck className="w-5 h-5" style={{ color }} />}
-          </div>
-          {v.speed > 0 && (
-            <div className="absolute -bottom-1 -right-1 bg-green-500 text-white text-[8px] font-bold px-1 rounded">
-              {v.speed}
+      element.innerHTML = renderToStaticMarkup(
+          <div className="relative pointer-events-auto cursor-pointer">
+            <div
+                className="w-10 h-10 rounded-full bg-white shadow-lg border-2 flex items-center justify-center transform transition-transform"
+                style={{borderColor: color}}
+            >
+              {v.type === 'truck' && <Truck className="w-6 h-6" style={{color}}/>}
+              {v.type === 'car' && <Car className="w-6 h-6" style={{color}}/>}
+              {v.type === 'motorcycle' && <Bike className="w-6 h-6" style={{color}}/>}
+              {v.type === 'van' && <Truck className="w-5 h-5" style={{color}}/>}
             </div>
-          )}
-        </div>
+            {v.speed > 0 && (
+                <div className="absolute -bottom-1 -right-1 bg-green-500 text-white text-[8px] font-bold px-1 rounded">
+                  {v.speed}
+                </div>
+            )}
+          </div>
       );
-      element.innerHTML = iconHtml;
 
       // Update position
       overlay.setPosition(fromLonLat([v.location[1], v.location[0]]));

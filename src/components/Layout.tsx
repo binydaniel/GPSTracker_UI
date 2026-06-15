@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
 import { 
-  LayoutDashboard, 
+  // LayoutDashboard,
   Map as MapIcon, 
   Truck, 
   Users, 
@@ -21,9 +21,9 @@ import { toast } from 'sonner';
 import { mockUser } from '../utils/mockData';
 
 const navItems = [
-  { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-  { name: 'Live Tracking', path: '/tracking', icon: MapIcon },
-  { name: 'Fleet', path: '/fleet', icon: Truck },
+  // { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+  { name: 'Live Tracking', path: '/', icon: MapIcon },
+  // { name: 'Fleet', path: '/fleet', icon: Truck },
   { name: 'Drivers', path: '/drivers', icon: Users },
   { name: 'Devices', path: '/devices', icon: Cpu },
   { name: 'Alerts', path: '/alerts', icon: Bell },
