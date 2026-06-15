@@ -51,8 +51,8 @@ export default function LiveTracking() {
   // 2. Main initial query to fetch the last known location state on component load
   React.useEffect(() => {
     setIsLoading(true);
-    fetch('http://localhost:8099/api/devices/354017113649335/locations?limit=1')
-    // fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=1')
+    // fetch('http://localhost:8099/api/devices/354017113649335/locations?limit=1')
+    fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=1')
         .then((res) => {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.json();
@@ -96,7 +96,7 @@ export default function LiveTracking() {
 
     // Instantiate connection
     const connection = new HubConnectionBuilder()
-        .withUrl("http://localhost:8099/hubs/tracking")
+        .withUrl("https://yoursitenote.com:8099/hubs/tracking")
         .withAutomaticReconnect()
         .configureLogging(LogLevel.Warning)
         .build();
