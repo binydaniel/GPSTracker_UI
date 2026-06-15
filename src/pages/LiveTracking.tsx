@@ -1,26 +1,26 @@
 import React from 'react';
-import { Map } from '../components/Map';
-import { mockGeofences } from '../utils/mockData';
-import { Vehicle } from '../types';
-import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'; // 1. Added SignalR Imports
+import {Map} from '../components/Map';
+import {mockGeofences} from '../utils/mockData';
+import {Vehicle} from '@/types';
+import {HubConnectionBuilder, HubConnectionState, LogLevel} from '@microsoft/signalr'; // 1. Added SignalR Imports
 import {
-  Search,
-  Filter,
-  Info,
-  Navigation,
   Activity,
-  Fuel,
+  ArrowRight,
   Battery,
   Clock,
-  ArrowRight,
-  TrendingUp,
-  Loader2
+  Filter,
+  Fuel,
+  Info,
+  Loader2,
+  Navigation,
+  Search,
+  TrendingUp
 } from 'lucide-react';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { ScrollArea } from '../components/ui/scroll-area';
-import { Card, CardContent } from '../components/ui/card';
+import {Input} from '../components/ui/input';
+import {Button} from '../components/ui/button';
+import {Badge} from '../components/ui/badge';
+import {ScrollArea} from '../components/ui/scroll-area';
+import {Card, CardContent} from '../components/ui/card';
 
 interface ApiLocationData {
   id: number;
@@ -51,7 +51,8 @@ export default function LiveTracking() {
   // 2. Main initial query to fetch the last known location state on component load
   React.useEffect(() => {
     setIsLoading(true);
-    fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=1')
+    fetch('http://localhost:8099/api/devices/354017113649335/locations?limit=1')
+    // fetch('https://yoursitenote.com:8099/api/devices/354017113649335/locations?limit=1')
         .then((res) => {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.json();
@@ -90,20 +91,23 @@ export default function LiveTracking() {
 
   // 3. Realtime Telemetry Hook: Replaces simulation engine with persistent WebSocket subscriptions
   React.useEffect(() => {
+    const targetImei = "354017113649335";
+    let isMounted = true; // 1. Flag to safely manage React StrictMode lifecycle unmounts
+
     // Instantiate connection
     const connection = new HubConnectionBuilder()
-        .withUrl("https://yoursitenote.com:8099/hubs/tracking") // <-- Change to your actual backend hub endpoint
+        .withUrl("http://localhost:8099/hubs/tracking")
         .withAutomaticReconnect()
         .configureLogging(LogLevel.Warning)
         .build();
 
-    // Event Handler: Triggers immediately when a target vehicle moves
-    // Change "ReceiveLocationUpdate" to the server-side broadcast method identifier
+    // 2. Synchronized event string with the backend ("LocationUpdate")
     connection.on("LocationUpdate", (updatedLocation: ApiLocationData) => {
+      if (!isMounted) return; // Ignore state updates if component unmounted
+
       setVehicles((prevVehicles) =>
           prevVehicles.map((vehicle) => {
-            // Target specific vehicle mapping by checking matching IDs
-            if (vehicle.id === "354017113649335") {
+            if (vehicle.id === targetImei) {
               return {
                 ...vehicle,
                 location: [updatedLocation.latitude, updatedLocation.longitude],
@@ -117,16 +121,34 @@ export default function LiveTracking() {
       );
     });
 
-    connection.invoke("Subscribe", "354017113649335")
-
-    // Handle WebSocket lifecycle connections safely
+    // 3. Moved subscription inside the asynchronous .then() block
     connection.start()
-        .then(() => console.log('Connected to Live Tracking Telemetry Stream.'))
-        .catch(err => console.error('SignalR Telemetry initialization failure: ', err));
+        .then(() => {
+          if (!isMounted) {
+            connection.stop();
+            return;
+          }
 
-    // Garbage clean up on view unmount to prevent lingering thread allocations
+          console.log('Connected to Live Tracking Telemetry Stream.');
+
+          if (connection.state === HubConnectionState.Connected) {
+            connection.invoke("Subscribe", targetImei)
+                .then(() => console.log(`Subscribed to telemetry updates for device: ${targetImei}`))
+                .catch(err => console.error("Subscription failed:", err));
+          } else {
+            console.warn(`Connection started, but state is currently: ${connection.state}`);
+          }
+        })
+        .catch(err => {
+          // 4. Safely silence the expected abort warning caused by React double-mounting
+          if (isMounted) {
+            console.error('SignalR Telemetry initialization failure: ', err);
+          }
+        });
+
     return () => {
-      connection.off("LocationUpdate");
+      isMounted = false; // Prevents pending async responses from throwing errors
+      connection.off("LocationUpdate"); // Synchronized cleanup string name
       connection.stop();
     };
   }, []);
