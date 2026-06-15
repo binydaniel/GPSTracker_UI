@@ -1,4 +1,4 @@
-import { Vehicle, Driver, Device, Alert, Geofence } from '../types';
+import { Vehicle, Driver, Device, Alert, Geofence } from '@/types';
 
 export const mockUser = {
   name: 'Wubshet',
