@@ -2,19 +2,17 @@ import React from 'react';
 import {Map} from '../components/Map';
 import {mockGeofences} from '../utils/mockData';
 import {Vehicle} from '@/types';
-import {HubConnectionBuilder, HubConnectionState, LogLevel} from '@microsoft/signalr'; // 1. Added SignalR Imports
+import {HubConnectionBuilder, HubConnectionState, LogLevel} from '@microsoft/signalr';
 import {
   Activity,
   ArrowRight,
   Battery,
   Clock,
   Filter,
-  Fuel,
-  Info,
   Loader2,
   Navigation,
   Search,
-  TrendingUp
+  TrendingUp, XCircle
 } from 'lucide-react';
 import {Input} from '../components/ui/input';
 import {Button} from '../components/ui/button';
@@ -65,10 +63,10 @@ export default function LiveTracking() {
               type: "car",
               name: "Wube",
               plate: "AA-C1000",
+              fuel: 0,
               status: data[0].speed > 0 ? 'moving' : 'idle',
               location: [data[0].latitude, data[0].longitude],
               speed: Math.round(data[0].speed),
-              fuel: 85, // Assigned placeholders since historical API returned 0
               battery: 92,
               lastPing: data[0].timestamp,
               currentHistoryIndex: 0
@@ -89,7 +87,6 @@ export default function LiveTracking() {
         });
   }, []);
 
-  // 3. Realtime Telemetry Hook: Replaces simulation engine with persistent WebSocket subscriptions
   React.useEffect(() => {
     const targetImei = "354017113649335";
     let isMounted = true; // 1. Flag to safely manage React StrictMode lifecycle unmounts
@@ -220,10 +217,10 @@ export default function LiveTracking() {
                       </div>
                     </div>
                     <div className="mt-2 flex items-center gap-3">
-                      <div className="flex items-center gap-1 text-[10px]">
-                        <Fuel className="w-3 h-3" />
-                        <span>{v.fuel}%</span>
-                      </div>
+                      {/*<div className="flex items-center gap-1 text-[10px]">*/}
+                      {/*  <Fuel className="w-3 h-3" />*/}
+                      {/*  <span>{v.fuel}%</span>*/}
+                      {/*</div>*/}
                       <div className="flex items-center gap-1 text-[10px]">
                         <Battery className="w-3 h-3" />
                         <span>{v.battery}%</span>
@@ -271,7 +268,7 @@ export default function LiveTracking() {
                         <p className="text-xs text-muted-foreground">{selectedVehicle.plate}</p>
                       </div>
                       <Button variant="ghost" size="icon" onClick={() => setSelectedVehicle(null)}>
-                        <Info className="w-5 h-5" />
+                        <XCircle className="w-5 h-5" />
                       </Button>
                     </div>
                     <div className="p-4 grid grid-cols-2 gap-4">
@@ -283,14 +280,14 @@ export default function LiveTracking() {
                             <p className="text-sm font-semibold">{selectedVehicle.speed} km/h</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="p-1.5 rounded bg-muted"><Fuel className="w-4 h-4 text-orange-500" /></div>
-                          <div>
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold">Fuel Level</p>
-                            <p className="text-sm font-semibold">{selectedVehicle.fuel}%</p>
-                          </div>
-                        </div>
-                      </div>
+                        {/*<div className="flex items-center gap-2">*/}
+                        {/*  <div className="p-1.5 rounded bg-muted"><Fuel className="w-4 h-4 text-orange-500" /></div>*/}
+                        {/*  <div>*/}
+                        {/*    <p className="text-[10px] text-muted-foreground uppercase font-bold">Fuel Level</p>*/}
+                        {/*    <p className="text-sm font-semibold">{selectedVehicle.fuel}%</p>*/}
+                        {/*  </div>*/}
+                        {/*</div>*/}
+
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <div className="p-1.5 rounded bg-muted"><Clock className="w-4 h-4 text-purple-500" /></div>
@@ -310,9 +307,10 @@ export default function LiveTracking() {
                         </div>
                       </div>
                     </div>
+                    </div>
                     <div className="p-4 border-t bg-muted/20 flex gap-2">
-                      <Button variant="default" className="flex-1">Send Command</Button>
-                      <Button variant="outline" className="flex-1">View History</Button>
+                      {/*<Button variant="default" className="flex-1">Send Command</Button>*/}
+                      <Button variant="default" className="flex-1">View History</Button>
                     </div>
                   </CardContent>
                 </Card>
