@@ -49,14 +49,62 @@ A modern React starter template built with Vite, TypeScript, Tailwind CSS, and s
 ## 📁 Project Structure
 
 ```
-src/
-├── components/
-│   └── ui/              # shadcn/ui components
-├── lib/
-│   └── utils.ts         # Utility functions
-├── App.tsx              # Main application component
-├── index.css            # Global styles with Tailwind
-└── main.tsx             # Application entry point
+my-gps-tracker-fe/
+├── public/                 # Static assets like favicon, map marker icons
+├── src/
+│   ├── assets/             # Global images, logos, global styles (tailwind.css)
+│   │
+│   ├── components/         # GLOBAL reusable UI components (buttons, inputs, cards)
+│   │   ├── ui/             # If using Shadcn, components live here
+│   │   │   ├── button.tsx
+│   │   │   └── table.tsx
+│   │   └── data-table.tsx  # A reusable wrapper for your admin tables
+│   │
+│   ├── config/             # Global configuration
+│   │   └── constants.ts    # API URLs, SignalR Hub endpoints, Mapbox tokens
+│   │
+│   ├── features/           # The CORE of your app - split by domain/module
+│   │   ├── auth/           # Login, JWT handling, Protected Routes
+│   │   │   ├── components/login-form.tsx
+│   │   │   ├── hooks/use-auth.ts
+│   │   │   └── auth-api.ts
+│   │   │
+│   │   ├── tracking/       # GPS Tracking, Maps, Vehicle Markers
+│   │   │   ├── components/vehicle-map.tsx
+│   │   │   ├── components/marker-popup.tsx
+│   │   │   ├── hooks/use-signalr.ts   <-- Manages real-time WebSockets to .NET
+│   │   │   └── tracking-api.ts
+│   │   │
+│   │   └── admin/          # Vehicle logs, User management, Reporting
+│   │       ├── components/vehicle-list.tsx
+│   │       ├── components/stats-chart.tsx
+│   │       └── admin-api.ts
+│   │
+│   ├── hooks/              # GLOBAL reusable hooks (e.g., useLocalStorage, useDebounce)
+│   │   └── use-local-storage.ts
+│   │
+│   ├── layouts/            # Layout wrappers (Sidebar, Navbar)
+│   │   ├── admin-layout.tsx # Dashboard sidebar & header for authenticated users
+│   │   └── auth-layout.tsx  # Centered card layout for login screen
+│   │
+│   ├── pages/              # Route entry points (keep these lightweight)
+│   │   ├── login.tsx       # Imports features/auth/components/login-form
+│   │   ├── live-map.tsx    # Imports features/tracking/components/vehicle-map
+│   │   └── vehicles.tsx    # Imports features/admin/components/vehicle-list
+│   │
+│   ├── routes/             # Client-side routing configuration
+│   │   └── app-routes.tsx  # React Router setup
+│   │
+│   ├── services/           # Global API clients
+│   │   ├── api-client.ts   # Axios instance with interceptors to attach .NET JWT tokens
+│   │   └── signalr-connection.ts # Base SignalR Hub connection setup
+│   │
+│   ├── App.tsx             # Root component (Providers, Router)
+│   └── main.tsx            # App entry point
+│
+├── .env                    # Environment variables (VITE_API_URL)
+├── package.json
+└── vite.config.ts
 ```
 
 ## 🎨 Customization

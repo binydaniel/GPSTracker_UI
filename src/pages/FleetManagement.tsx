@@ -7,7 +7,7 @@ import {
   TableHeader, 
   TableRow 
 } from '../components/ui/table';
-import { mockVehicles } from '../utils/mockData';
+import { mockVehicles } from '../features/mockData.ts';
 import { Truck, Search, Plus, MoreVertical, Filter, Download } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';

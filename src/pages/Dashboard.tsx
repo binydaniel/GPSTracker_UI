@@ -22,7 +22,7 @@ import {
   Area
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { mockVehicles, mockAlerts } from '../utils/mockData';
+import { mockVehicles, mockAlerts } from '../features/mockData.ts';
 import { Badge } from '../components/ui/badge';
 import { ScrollArea } from '../components/ui/scroll-area';
 

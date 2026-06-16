@@ -7,7 +7,7 @@ import {
 import { Button } from './ui/button';
 import { useIsMobile } from '../hooks/use-mobile';
 import { toast } from 'sonner';
-import { mockUser } from '../utils/mockData';
+import { mockUser } from '../../mockData';
 
 // const navItems = [
 //   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
