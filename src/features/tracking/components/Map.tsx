@@ -11,7 +11,7 @@ import {Circle as CircleGeom, Polygon as PolygonGeom} from 'ol/geom';
 import {Fill, Stroke, Style} from 'ol/style';
 import {fromLonLat} from 'ol/proj';
 import Overlay from 'ol/Overlay';
-import {Geofence, Vehicle} from '@/types';
+import {Geofence, Vehicle} from '@/features/tracking/types.ts';
 import {Bike, Car, Truck} from 'lucide-react';
 import {renderToStaticMarkup} from 'react-dom/server';
 

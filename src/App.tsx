@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Layout } from './components/Layout';
-import LiveTracking from './pages/LiveTracking';
+// import { Layout } from './features/components/Layout';
+import {Layout } from './features/tracking/components/Layout'
+// import LiveTracking from './pages/LiveTracking';
+import LiveTracking from './features/tracking/index';
 import { Toaster } from 'sonner';
 
 // Placeholder pages for other routes

@@ -1,4 +1,5 @@
-import { Vehicle, Driver, Device, Alert, Geofence } from '@/types';
+// import { Vehicle, Driver, Alert, Geofence } from '@/features/tracking/types.ts';
+import { Vehicle, Driver, Alert, Geofence } from '@/types';
 
 export const mockUser = {
   name: 'Wubshet',
@@ -98,12 +99,12 @@ export const mockDrivers: Driver[] = [
   }
 ];
 
-export const mockDevices: Device[] = [
-  { id: 'dev1', imei: '862345001234567', model: 'Teltonika FMB920', status: 'active', installedAt: '2023-01-15', vehicleId: 'v1' },
-  { id: 'dev2', imei: '862345001234568', model: 'Teltonika FMB120', status: 'active', installedAt: '2023-02-20', vehicleId: 'v2' },
-  { id: 'dev3', imei: '862345001234569', model: 'Teltonika FMT100', status: 'active', installedAt: '2023-03-10', vehicleId: 'v3' },
-  { id: 'dev4', imei: '862345001234570', model: 'Queclink GV300', status: 'active', installedAt: '2023-05-05', vehicleId: 'v4' }
-];
+// export const mockDevices: Device[] = [
+//   { id: 'dev1', imei: '862345001234567', model: 'Teltonika FMB920', status: 'active', installedAt: '2023-01-15', vehicleId: 'v1' },
+//   { id: 'dev2', imei: '862345001234568', model: 'Teltonika FMB120', status: 'active', installedAt: '2023-02-20', vehicleId: 'v2' },
+//   { id: 'dev3', imei: '862345001234569', model: 'Teltonika FMT100', status: 'active', installedAt: '2023-03-10', vehicleId: 'v3' },
+//   { id: 'dev4', imei: '862345001234570', model: 'Queclink GV300', status: 'active', installedAt: '2023-05-05', vehicleId: 'v4' }
+// ];
 
 export const mockAlerts: Alert[] = [
   {
