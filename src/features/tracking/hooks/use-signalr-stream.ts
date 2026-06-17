@@ -10,7 +10,7 @@ export function useSignalRStream(
         let isMounted = true;
 
         const connection = new HubConnectionBuilder()
-            .withUrl("http://localhost:8099/hubs/tracking")
+            .withUrl(`${import.meta.env.VITE_API_URL}/hubs/tracking`)
             .withAutomaticReconnect()
             .configureLogging(LogLevel.Warning)
             .build();

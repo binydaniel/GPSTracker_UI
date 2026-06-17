@@ -11,11 +11,11 @@ export function useLiveData(
         const { signal } = controller;
 
         setIsLoading(true);
-
-        const fetchLocations = fetch('http://localhost:8099/api/devices/354017113649335/locations?limit=1', { signal })
+        const targetDeviceId = "354017113649335";
+        const fetchLocations = fetch(`${import.meta.env.VITE_API_URL}/api/devices/${targetDeviceId}/locations?limit=1`, { signal })
             .then(res => res.ok ? res.json() : Promise.reject('Location fetch failed'));
 
-        const fetchDevices = fetch('http://localhost:8099/api/devices', { signal })
+        const fetchDevices = fetch(`${import.meta.env.VITE_API_URL}/api/devices`, { signal })
             .then(res => res.ok ? res.json() : Promise.reject('Devices fetch failed'));
 
         Promise.all([fetchLocations, fetchDevices])
@@ -27,11 +27,19 @@ export function useLiveData(
                 const batteryPercentage = Math.round(((rawMilliVolts - 3600) / (4200 - 3600)) * 100);
 
                 if (locationData && locationData.length > 0) {
+
+                    const currentDevice = Array.isArray(devicesData)
+                        ? devicesData.find(d => d.imei === targetDeviceId)
+                        : null;
+
+                    console.log("devicesData",devicesData);
+                    console.log("currentDevice",currentDevice);
+
                     vehicles = [{
-                        id: "354017113649335",
-                        deviceId: "354017113649335",
+                        id: targetDeviceId,
+                        deviceId: targetDeviceId,
                         type: "car",
-                        name: "Wube",
+                        name: currentDevice?.name || "Unknown",
                         plate: "AA-C1000",
                         fuel: 0,
                         status: locationData[0].movement ? 'moving' : 'idle',
@@ -51,7 +59,7 @@ export function useLiveData(
                 const mappedDevices: Device[] = Array.isArray(devicesData)
                     ? devicesData.map((device) => ({
                         deviceId: device.imei,
-                        name: device.name ,
+                        name: device.name || "Unnamed Device",
                         firstSeen: device.firstseen,
                         lastSeen: device.lastseen,
                     }))
