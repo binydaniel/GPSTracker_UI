@@ -36,8 +36,8 @@ export default function LiveTracking() {
     // Sync selected vehicle details when wire updates arrives
     React.useEffect(() => {
 
-        // console.log("device",JSON.stringify(trackerData.devices, null, 2))
-        // console.log("vehicle",JSON.stringify(trackerData.vehicles, null, 2))
+        console.log("device",JSON.stringify(trackerData.devices, null, 2))
+        console.log("vehicle",JSON.stringify(trackerData.vehicles, null, 2))
 
         if (selectedVehicle) {
             const updated = trackerData.vehicles.find(v => v.id === selectedVehicle.id);

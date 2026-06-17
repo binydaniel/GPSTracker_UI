@@ -24,6 +24,7 @@ export function VehicleDetailsCard({ selectedVehicle, setSelectedVehicle }: Vehi
                         </Button>
                     </div>
 
+                    <div className="space-y-3">
                     <div className="p-4 grid grid-cols-2 gap-4">
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
@@ -35,7 +36,7 @@ export function VehicleDetailsCard({ selectedVehicle, setSelectedVehicle }: Vehi
                             </div>
                         </div>
 
-                        <div className="space-y-3">
+
                             <div className="flex items-center gap-2">
                                 <div className="p-1.5 rounded bg-muted"><Clock className="w-4 h-4 text-purple-500" /></div>
                                 <div>
