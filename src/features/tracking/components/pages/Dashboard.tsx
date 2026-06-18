@@ -2,11 +2,11 @@ import React from 'react';
 import { 
   Truck, 
   AlertTriangle, 
-  MapPin, 
+  // MapPin,
   TrendingUp,
   Activity,
   Fuel,
-  Battery
+  // Battery
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -16,15 +16,15 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  LineChart,
-  Line,
+  // LineChart,
+  // Line,
   AreaChart,
   Area
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { mockVehicles, mockAlerts } from '../features/mockData.ts';
-import { Badge } from '../components/ui/badge';
-import { ScrollArea } from '../components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { mockVehicles, mockAlerts } from '../../../mockData.ts';
+import { Badge } from '../ui/badge';
+import { ScrollArea } from '../ui/scroll-area';
 
 const fuelData = [
   { name: 'Mon', usage: 450 },

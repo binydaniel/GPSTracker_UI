@@ -2,6 +2,7 @@ import { Vehicle, Device } from '@/types';
 
 export interface ApiLocationData {
     id: number;
+    imei: string;
     timestamp: string;
     latitude: number;
     longitude: number;

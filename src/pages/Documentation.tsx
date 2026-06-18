@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  FileText, 
+  // FileText,
   Download, 
   Layers, 
   Settings2, 
@@ -10,9 +10,9 @@ import {
   Zap,
   LayoutTemplate
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../features/tracking/components/ui/card';
+import { Button } from '../features/tracking/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/features/tracking/components/ui/tabs.tsx';
 
 export default function Documentation() {
   return (

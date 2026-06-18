@@ -11,9 +11,9 @@ import {Circle as CircleGeom, Polygon as PolygonGeom} from 'ol/geom';
 import {Fill, Stroke, Style} from 'ol/style';
 import {fromLonLat} from 'ol/proj';
 import Overlay from 'ol/Overlay';
-import {Geofence, Vehicle} from '@/features/tracking/types.ts';
 import {Bike, Car, Truck} from 'lucide-react';
 import {renderToStaticMarkup} from 'react-dom/server';
+import {Geofence, Vehicle} from "@/types";
 
 interface MapProps {
   vehicles?: Vehicle[];
@@ -23,19 +23,19 @@ interface MapProps {
   onVehicleClick?: (vehicle: Vehicle) => void;
 }
 
-export function Map({ 
-  vehicles = [], 
-  geofences = [], 
-  center = [51.505, -0.09], 
-  zoom = 13,
-  onVehicleClick 
-}: MapProps) {
+export function Map({
+                      vehicles = [],
+                      geofences = [],
+                      center = [51.505, -0.09],
+                      zoom = 13,
+                      onVehicleClick
+                    }: MapProps) {
   const mapElement = React.useRef<HTMLDivElement>(null);
   const mapRef = React.useRef<OlMap | null>(null);
   const vectorSourceRef = React.useRef<VectorSource>(new VectorSource());
   const overlaysRef = React.useRef<Record<string, Overlay>>({});
 
-  // Initialize Map
+  // Initialize Map Layout
   React.useEffect(() => {
     if (!mapElement.current) return;
 
@@ -59,10 +59,12 @@ export function Map({
 
     mapRef.current = initialMap;
 
-    return () => initialMap.setTarget(undefined);
+    return () => {
+      initialMap.setTarget(undefined);
+    };
   }, []);
 
-  // Sync View
+  // Sync Map Camera Center Window
   React.useEffect(() => {
     if (!mapRef.current) return;
     const view = mapRef.current.getView();
@@ -76,7 +78,7 @@ export function Map({
   // Sync Geofences
   React.useEffect(() => {
     if (!mapRef.current) return;
-    
+
     vectorSourceRef.current.clear();
 
     geofences.forEach((gf) => {
@@ -96,29 +98,32 @@ export function Map({
 
       if (feature) {
         feature.setStyle(
-          new Style({
-            stroke: new Stroke({
-              color: gf.color,
-              width: 2,
-            }),
-            fill: new Fill({
-              color: gf.color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
-            }),
-          })
+            new Style({
+              stroke: new Stroke({
+                color: gf.color,
+                width: 2,
+              }),
+              fill: new Fill({
+                color: gf.color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+              }),
+            })
         );
         vectorSourceRef.current.addFeature(feature);
       }
     });
   }, [geofences]);
 
-  // Sync Vehicle Overlays
+  // Sync Vehicle Overlays (Fixed to handle multi-request async rendering)
   React.useEffect(() => {
     if (!mapRef.current) return;
 
     const map = mapRef.current;
-    const currentVehicleIds = new Set(vehicles.map(v => v.id));
 
-    // Remove old overlays
+    // 1. Filter out devices that are completely missing locations or sitting at [0,0]
+    const activeVehicles = vehicles.filter(v => v.location && (v.location[0] !== 0 || v.location[1] !== 0));
+    const currentVehicleIds = new Set(activeVehicles.map(v => v.id));
+
+    // 2. Remove ONLY the overlays that genuinely belong to dead devices
     Object.keys(overlaysRef.current).forEach(id => {
       if (!currentVehicleIds.has(id)) {
         const overlay = overlaysRef.current[id];
@@ -127,40 +132,42 @@ export function Map({
       }
     });
 
-    // Add or update overlays
-    vehicles.forEach(v => {
+    // 3. Render or update markers for all active units
+    activeVehicles.forEach(v => {
       const color = v.status === 'moving' ? '#10b981' : v.status === 'idle' ? '#f59e0b' : v.status === 'offline' ? '#6b7280' : '#3b82f6';
-      
+
       let overlay = overlaysRef.current[v.id];
       let element: HTMLDivElement;
 
       if (!overlay) {
         element = document.createElement('div');
-        element.className = 'custom-vehicle-marker';
-        element.onclick = (e) => {
-          e.stopPropagation();
-          onVehicleClick?.(v);
-        };
-        
+        element.className = 'custom-vehicle-marker absolute';
+
         overlay = new Overlay({
           id: v.id,
           element: element,
           positioning: 'center-center',
           stopEvent: true,
         });
-        
+
         map.addOverlay(overlay);
         overlaysRef.current[v.id] = overlay;
       } else {
         element = overlay.getElement() as HTMLDivElement;
       }
 
-      // Update element content (React icons rendered to static markup)
+      // Rebind click listener to dodge state closures
+      element.onclick = (e) => {
+        e.stopPropagation();
+        onVehicleClick?.(v);
+      };
+
+      // Set HTML Markup dynamically
       element.innerHTML = renderToStaticMarkup(
-          <div className="relative pointer-events-auto cursor-pointer">
+          <div className="relative pointer-events-auto cursor-pointer" style={{ width: '40px', height: '40px' }}>
             <div
                 className="w-10 h-10 rounded-full bg-white shadow-lg border-2 flex items-center justify-center transform transition-transform"
-                style={{borderColor: color}}
+                style={{ borderColor: color }}
             >
               {v.type === 'truck' && <Truck className="w-6 h-6" style={{color}}/>}
               {v.type === 'car' && <Car className="w-6 h-6" style={{color}}/>}
@@ -175,19 +182,18 @@ export function Map({
           </div>
       );
 
-      // Update position
       overlay.setPosition(fromLonLat([v.location[1], v.location[0]]));
     });
 
   }, [vehicles, onVehicleClick]);
 
   return (
-    <div className="w-full h-full relative">
-      <div ref={mapElement} className="w-full h-full" />
-      
-      <div className="absolute bottom-1 right-1 bg-white/80 px-2 py-0.5 text-[10px] text-muted-foreground rounded z-10 pointer-events-none">
-        &copy; OpenStreetMap contributors
+      <div className="w-full h-full relative">
+        <div ref={mapElement} className="w-full h-full" />
+
+        <div className="absolute bottom-1 right-1 bg-white/80 px-2 py-0.5 text-[10px] text-muted-foreground rounded z-10 pointer-events-none">
+          &copy; OpenStreetMap contributors
+        </div>
       </div>
-    </div>
   );
 }
