@@ -6,12 +6,12 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from '../components/ui/table';
+} from '../ui/table';
 import { mockVehicles } from '../../../mockData.ts';
 import { Truck, Search, Plus, MoreVertical, Filter, Download } from 'lucide-react';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 
 export default function FleetManagement() {
   const [search, setSearch] = React.useState('');
